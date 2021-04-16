@@ -1,6 +1,6 @@
 from astropy.io import fits
 import numpy as np 
-from fitutils import concolve_lsf
+from cubelines.fitutils import concolve_lsf
 
 class FitResult():
 	def __init__(self, popt, perr, line, lsf, hdr = None,
@@ -44,27 +44,37 @@ class FitResult():
 		dfluxmap = np.sqrt((dnmap/nmap)**2 + (dsigmap/sigmap)**2)*fluxmap
 		return fluxmap, dfluxmap
 
-	def get_vmap(self, z0, vfile, dvfile, comp = 'comp1'):
+	def get_vmap(self, z0, vfile, dvfile, vdisfile, dvdisfile, comp = 'comp1'):
 		if comp == 'comp1': compi = 0
 		if comp == 'comp2': compi = 5
 		i = compi
 		vmap = (self.popt[i,:,:] - z0)/(1 + z0)*2.998e5
 		dvmap = self.perr[i,:,:]/(1 + z0)*2.998e5
+		vdismap = self.popt[i+1, :, :]
+		dvdismap = self.perr[i+1, :, :]
 
 		if self.flagmap is not None:
 			vmap[self.flagmap == 0] = np.nan
 			dvmap[self.flagmap == 0] = np.nan
+			vdismap[self.flagmap == 0] = np.nan
+			dvdismap[self.flagmap == 0] = np.nan
 		if self.rmin is not None:
 			mask = self.get_rmask()
 			vmap[mask] = np.nan
 			dvmap[mask] = np.nan
+			vdismap[mask] = np.nan
+			dvdismap[mask] = np.nan
 			
 		if self.hdr == None:
 			fits.writeto(vfile, vmap, overwrite=True)
 			fits.writeto(dvfile, dvmap, overwrite=True)
+			fits.writeto(vdisfile, vdismap, overwrite=True)
+			fits.writeto(dvdisfile, dvdismap, overwrite=True)
 		else:
 			fits.writeto(vfile, vmap, self.hdr, overwrite=True)
 			fits.writeto(dvfile, dvmap, self.hdr, overwrite=True)
+			fits.writeto(vdisfile, vdismap, self.hdr, overwrite=True)
+			fits.writeto(dvdisfile, dvdismap, self.hdr, overwrite=True)
 
 	def get_fluxmap(self, ffile, dffile, comp = 'comp1_o2_1'):
 		# z1, sig1, n1, n21, n3, z2, sig2, n5, n65, n7, a1, b1, a2, b2
@@ -88,6 +98,13 @@ class FitResult():
 		else: print('Invalid component name')
 
 		fluxmap, dfluxmap = self.get_gaussian_area(zi, sigi, ni, linei, scalei)
+		if self.flagmap is not None:
+			fluxmap[self.flagmap == 0] = np.nan
+			dfluxmap[self.flagmap == 0] = np.nan
+		if self.rmin is not None:
+			mask = self.get_rmask()
+			fluxmap[mask] = np.nan
+			dfluxmap[mask] = np.nan
 		if self.hdr == None:
 			fits.writeto(ffile, fluxmap, overwrite=True)
 			fits.writeto(dfffile, dfluxmap, overwrite=True)

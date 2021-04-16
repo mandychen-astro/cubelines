@@ -94,9 +94,11 @@ class Fitting():
 		nx, ny = self.data.shape[2], self.data.shape[1]		
 		mask1, mask2 = self.get_wavemask()
 		wavefit = np.concatenate((self.wave[mask1], self.wave[mask2]))
+		dof = len(wavefit) - len(self.p0)
 		self.poptmap = np.zeros(shape=(len(self.p0), ny, nx))
 		self.perrmap = np.zeros(shape=(len(self.p0), ny, nx))
-		self.poptmap[:,:,:], self.perrmap[:,:,:] = np.nan, np.nan
+		self.chi2map = np.zeros(shape=(ny, nx))
+		self.poptmap[:,:,:], self.perrmap[:,:,:], self.chi2map[:,:] = np.nan, np.nan, np.nan
 
 		t0 = time.time()
 		for y in range(self.ylim[0], self.ylim[1]):
@@ -105,16 +107,20 @@ class Fitting():
 				errspec = self.err[:, y, x]
 
 				fluxfit = np.concatenate((dataspec[mask1], dataspec[mask2]))
-				errfit = np.concatenate((errspec[mask1], errspec[mask2]*3.))
+				errfit = np.concatenate((errspec[mask1], errspec[mask2]))
 				try:
 					popt, pcov = curve_fit(self.func, wavefit, fluxfit, 
 											sigma=errfit, p0=self.p0, bounds=self.plim)
 					perr = np.sqrt(np.diag(pcov))
+					chi2 = np.sum((self.func(wavefit, *popt) - fluxfit)**2/errfit**2)
+					chi2_nu = chi2/dof
 					self.poptmap[:, y, x] = popt
 					self.perrmap[:, y, x] = perr
+					self.chi2map[y, x] = chi2_nu
 				except:
 					self.poptmap[:, y, x] = np.nan
 					self.perrmap[:, y, x] = np.nan
+					self.chi2map[y, x] = np.nan
 				# popt, pcov = curve_fit(self.func, wavefit, fluxfit, 
 				# 						sigma=errfit, p0=self.p0, bounds=self.plim)
 				# perr = np.sqrt(np.diag(pcov))
@@ -125,9 +131,10 @@ class Fitting():
 		t1 = time.time()
 		print('Fitting finished in ', t1-t0, 's; ', (t1-t0)/60., 'mins')
 
-	def savefitting(self, poptfile, perrfile):
+	def savefitting(self, poptfile, perrfile, chi2file):
 		fits.writeto(poptfile, self.poptmap, overwrite=True)
 		fits.writeto(perrfile, self.perrmap, overwrite=True)
+		fits.writeto(chi2file, self.chi2map, overwrite=True)
 
 
 
