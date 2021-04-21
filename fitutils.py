@@ -3,6 +3,7 @@ from scipy.optimize import curve_fit
 from scipy.interpolate import interp1d
 from astropy.io import fits
 import time
+from mpdaf.obj import Cube
 
 
 def get_lsf(wave):
@@ -21,6 +22,18 @@ def wave2vel(line,z,wave):
 
 def gauss(x, mu, sig, n):
     return n*np.exp(-(x-mu)**2/(2*sig**2))
+
+def interpWindow(line, z, dv, ddv):
+    # generate interpolation window, dv in km/s
+    # for lines in the line list redshifted to z
+    # output blue window [wv1, wv2] ([-2dv, -dv])
+    # output red window [wv3, wv4] ([+dv, +2dv])
+    redline = line*(1+z)
+    dlam = dv/2.998e5*redline
+    ddlam = (ddv+dv)/2.998e5*redline
+    wv1, wv2 = redline-ddlam, redline-dlam
+    wv3, wv4 = redline+dlam, redline+ddlam
+    return wv1, wv2, wv3, wv4
 
 class FitFunc():
 	def __init__(self, line, lsf, wavebounds):
@@ -46,11 +59,12 @@ class FitFunc():
 		g4 = gauss(x, self.line[3]*(1+z), concolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
 		return g1+g2+g3+g4+cont
 
-	def gauss_o2_o3_2comp_w_cont(self, x, z1, sig1, n1, n21, n3, z2, sig2, n5, n65, n7, a1, b1, a2, b2):
+	def gauss_o2_o3_2comp_w_cont(self, x, z1, sig1, n1, n21, n3, z21, sig2, n5, n65, n7, a1, b1, a2, b2):
 		n2 = n1*n21
 		n4 = n3*3.
 		n6 = n5*n65
 		n8 = n7*3.
+		z2 = z1+z21
 		mask1 = (x>self.wavemin1) & (x<self.wavemax1)
 		mask2 = (x>self.wavemin2) & (x<self.wavemax2)
 		x1, x2 = x[mask1], x[mask2]
@@ -70,11 +84,39 @@ class FitFunc():
 
 		return g1+g2+g3+g4+g5+g6+g7+g8+cont
 
+	def gauss_o2_o3(self, x, z, sig, n1, n21, n3):
+		n2 = n1*n21
+		n4 = n3*3.
+		g1 = gauss(x, self.line[0]*(1+z), concolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z), n1)
+		g2 = gauss(x, self.line[1]*(1+z), concolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
+		g3 = gauss(x, self.line[2]*(1+z), concolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
+		g4 = gauss(x, self.line[3]*(1+z), concolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
+		return g1+g2+g3+g4
+
+	def gauss_o2_o3_2comp(self, x, z1, sig1, n1, n21, n3, z21, sig2, n5, n65, n7):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		z2 = z1+z21
+		g1 = gauss(x, self.line[0]*(1+z1), concolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), concolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), concolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), concolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), concolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), concolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), concolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), concolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+
+		return g1+g2+g3+g4+g5+g6+g7+g8
+
 class Fitting():
 	def __init__(self, cube, wavebounds, func, p0, plim, xlim, ylim):
+		self.wv = cube.wave
 		self.wave = cube.wave.coord()
 		self.data = cube.data.data
 		self.err = np.sqrt(cube.var.data)
+		self.wcs = cube.wcs
 		self.dh = cube.data_header
 		self.wavebounds = wavebounds
 		self.p0 = p0
@@ -82,6 +124,7 @@ class Fitting():
 		self.xlim = xlim
 		self.ylim = ylim
 		self.func = func
+		self.nx, self.ny = self.data.shape[2], self.data.shape[1]	
 
 	def get_wavemask(self):
 		wavemin1, wavemax1 = self.wavebounds[0], self.wavebounds[1]
@@ -90,15 +133,30 @@ class Fitting():
 		mask2 = (self.wave>wavemin2) & (self.wave<wavemax2)
 		return mask1, mask2
 
-	def dofit(self):
-		nx, ny = self.data.shape[2], self.data.shape[1]		
+	def cont_sub(self, line, z, dv, ddv, savefile = None):
+		wv1, wv2, wv3, wv4 = interpWindow(line, z, dv, ddv)
+		mask_b = (self.wave>=wv1)&(self.wave<=wv2)
+		mask_r = (self.wave>=wv3)&(self.wave<=wv4)
+		mask_mid = (self.wave>=(wv1-200))&(self.wave<=(wv4+200))
+		wavefit = np.concatenate((self.wave[mask_b], self.wave[mask_r]))
+		for y in range(0, self.ny):
+			for x in range(0, self.nx):
+				fluxfit = np.concatenate((self.data[mask_b,y,x], self.data[mask_r,y,x]))
+				z = np.polyfit(wavefit, fluxfit, 1)
+				p = np.poly1d(z)
+				linemodel = p(self.wave[mask_mid])
+				self.data[mask_mid, y, x] -=  linemodel
+		if savefile is not None:
+			cubenew = Cube(data = self.data, var = (self.err)**2, data_header=self.dh, 
+				wcs=self.wcs, wave=self.wv)
+			cubenew.write(savefile, savemask = 'none')
+
+	def dofit(self):	
 		mask1, mask2 = self.get_wavemask()
 		wavefit = np.concatenate((self.wave[mask1], self.wave[mask2]))
-		dof = len(wavefit) - len(self.p0)
-		self.poptmap = np.zeros(shape=(len(self.p0), ny, nx))
-		self.perrmap = np.zeros(shape=(len(self.p0), ny, nx))
-		self.chi2map = np.zeros(shape=(ny, nx))
-		self.poptmap[:,:,:], self.perrmap[:,:,:], self.chi2map[:,:] = np.nan, np.nan, np.nan
+		self.poptmap = np.zeros(shape=(len(self.p0), self.ny, self.nx))
+		self.perrmap = np.zeros(shape=(len(self.p0), self.ny, self.nx))
+		self.poptmap[:,:,:], self.perrmap[:,:,:] = np.nan, np.nan
 
 		t0 = time.time()
 		for y in range(self.ylim[0], self.ylim[1]):
@@ -112,15 +170,14 @@ class Fitting():
 					popt, pcov = curve_fit(self.func, wavefit, fluxfit, 
 											sigma=errfit, p0=self.p0, bounds=self.plim)
 					perr = np.sqrt(np.diag(pcov))
-					chi2 = np.sum((self.func(wavefit, *popt) - fluxfit)**2/errfit**2)
-					chi2_nu = chi2/dof
+					if len(self.p0)>5:
+						popt[5] = popt[0] + popt[5]
+						perr[5] = np.sqrt(perr[0]**2 + perr[5]**2)
 					self.poptmap[:, y, x] = popt
 					self.perrmap[:, y, x] = perr
-					self.chi2map[y, x] = chi2_nu
 				except:
 					self.poptmap[:, y, x] = np.nan
 					self.perrmap[:, y, x] = np.nan
-					self.chi2map[y, x] = np.nan
 				# popt, pcov = curve_fit(self.func, wavefit, fluxfit, 
 				# 						sigma=errfit, p0=self.p0, bounds=self.plim)
 				# perr = np.sqrt(np.diag(pcov))
@@ -131,10 +188,9 @@ class Fitting():
 		t1 = time.time()
 		print('Fitting finished in ', t1-t0, 's; ', (t1-t0)/60., 'mins')
 
-	def savefitting(self, poptfile, perrfile, chi2file):
+	def savefitting(self, poptfile, perrfile):
 		fits.writeto(poptfile, self.poptmap, overwrite=True)
 		fits.writeto(perrfile, self.perrmap, overwrite=True)
-		fits.writeto(chi2file, self.chi2map, overwrite=True)
 
 
 
