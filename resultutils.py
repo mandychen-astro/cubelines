@@ -1,6 +1,6 @@
 from astropy.io import fits
 import numpy as np 
-from cubelines.fitutils import concolve_lsf
+from cubelines.fitutils import convolve_lsf
 
 class FitResult():
 	def __init__(self, popt, perr, line, lsf, hdr = None,
@@ -27,8 +27,8 @@ class FitResult():
 	def get_gaussian_area(self, zi, sigi, ni, linei, scalei):
 		zmap = self.popt[zi, :, :]
 		sigmap = self.popt[sigi,:,:]
-		dsigmap = sigmap/concolve_lsf(sigmap, np.full_like(sigmap,self.lsf[linei]))*self.perr[sigi,:,:]
-		sig_ang = concolve_lsf(sigmap, np.full_like(sigmap,self.lsf[linei]))/2.998e5*self.line[linei]*(1+zmap)
+		dsigmap = sigmap/convolve_lsf(sigmap, np.full_like(sigmap,self.lsf[linei]))*self.perr[sigi,:,:]
+		sig_ang = convolve_lsf(sigmap, np.full_like(sigmap,self.lsf[linei]))/2.998e5*self.line[linei]*(1+zmap)
 		dsig_ang = dsigmap/2.998e5*self.line[linei]*(1+zmap)
 
 		if scalei == 0: 
