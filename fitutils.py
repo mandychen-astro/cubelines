@@ -4,10 +4,11 @@ from scipy.interpolate import interp1d
 from astropy.io import fits
 import time
 from mpdaf.obj import Cube
+import os
 
 
 def get_lsf(wave):
-    l0, r0 = np.loadtxt('/Users/mandychen/CUBS/muse_lsf.dat',unpack=True)
+    l0, r0 = np.loadtxt(os.environ['HOME']+'/CUBS/muse_lsf.dat',unpack=True)
     r = interp1d(l0, r0)(wave)
     lsf = 2.998e5/r
     return lsf
