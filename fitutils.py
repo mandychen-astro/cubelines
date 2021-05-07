@@ -6,7 +6,6 @@ import time
 from mpdaf.obj import Cube
 import os
 
-
 def get_lsf(wave):
     l0, r0 = np.loadtxt(os.environ['HOME']+'/CUBS/muse_lsf.dat',unpack=True)
     r = interp1d(l0, r0)(wave)
@@ -42,6 +41,33 @@ class FitFunc():
 		self.lsf = lsf
 		self.wavemin1, self.wavemax1 = wavebounds[0], wavebounds[1]
 		self.wavemin2, self.wavemax2 = wavebounds[2], wavebounds[3]
+
+	def gauss_o2_w_cont(self, x, z, sig, n1, n21, a1, b1):
+		n2 = n1*n21
+		mask1 = (x>self.wavemin1) & (x<self.wavemax1)
+		x1 = x[mask1]
+		cont1 = a1 + x1*b1
+		cont = np.zeros(len(x))
+		cont[mask1] = cont1
+		g1 = gauss(x, self.line[0]*(1+z), convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z), n1)
+		g2 = gauss(x, self.line[1]*(1+z), convolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
+		return g1+g2+cont
+
+	def gauss_o2_2comp_w_cont(self, x, z1, sig1, n1, n21, z21, sig2, n5, n65, a1, b1):
+		n2 = n1*n21
+		n6 = n5*n65
+		z2 = z1+z21
+		mask1 = (x>self.wavemin1) & (x<self.wavemax1)
+		x1 = x[mask1]
+		cont1 = a1 + x1*b1
+		cont = np.zeros(len(x))
+		cont[mask1] = cont1
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+
+		return g1+g2+g5+g6+cont
 
 	def gauss_o2_o3_w_cont(self, x, z, sig, n1, n21, n3, a1, b1, a2, b2):
 		n2 = n1*n21
@@ -223,11 +249,13 @@ class Fitting():
 					popt, pcov = curve_fit(self.func, wavefit, fluxfit, 
 											sigma=errfit, p0=self.p0, bounds=self.plim)
 					perr = np.sqrt(np.diag(pcov))
-					if len(self.p0)>5:
-						popt[5] = popt[0] + popt[5]
-						perr[5] = np.sqrt(perr[0]**2 + perr[5]**2)
+					# if len(self.p0)>5:
+					popt[4] = popt[0] + popt[4]
+					perr[4] = np.sqrt(perr[0]**2 + perr[4]**2)
+					# 	print('this happened')
 					self.poptmap[:, y, x] = popt
 					self.perrmap[:, y, x] = perr
+					# print(popt)
 				except:
 					self.poptmap[:, y, x] = np.nan
 					self.perrmap[:, y, x] = np.nan

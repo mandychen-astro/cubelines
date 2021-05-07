@@ -46,7 +46,9 @@ class FitResult():
 
 	def get_vmap(self, z0, vfile, dvfile, vdisfile, dvdisfile, comp = 'comp1'):
 		if comp == 'comp1': compi = 0
+		if comp == 'comp1_OIIonly': compi = 0
 		if comp == 'comp2': compi = 5
+		if comp == 'comp2_OIIonly': compi = 4
 		if comp == 'comp3': compi = 10
 		i = compi
 		vmap = (self.popt[i,:,:] - z0)/(1 + z0)*2.998e5
