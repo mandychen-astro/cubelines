@@ -42,6 +42,31 @@ class FitFunc():
 		self.wavemin1, self.wavemax1 = wavebounds[0], wavebounds[1]
 		self.wavemin2, self.wavemax2 = wavebounds[2], wavebounds[3]
 
+	def err_prop_term_o2(self, x, z, sig, n1, n21):
+		n2 = n1*n21
+		g1 = gauss(x, self.line[0]*(1+z), convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z), n1)
+		g2 = gauss(x, self.line[1]*(1+z), convolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
+		term1 = -(x - self.line[0]*(1+z))/(convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z))*(g1+g2)
+		return term1
+
+	def err_prop_term_o2_o3(self, x, z, sig, n1, n21, n3):
+		n2 = n1*n21
+		n4 = n3*3.
+		g1 = gauss(x, self.line[0]*(1+z), convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z), n1)
+		g2 = gauss(x, self.line[1]*(1+z), convolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
+		g3 = gauss(x, self.line[2]*(1+z), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
+		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
+		term1 = -(x - self.line[0]*(1+z))/(convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z))*(g1+g2)
+		term2 = -(x - self.line[2]*(1+z))/(convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z))*g3
+		term3 = -(x - self.line[3]*(1+z))/(convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z))*g4
+		return term1+term2+term3
+
+	def gauss_o2(self, x, z, sig, n1, n21):
+		n2 = n1*n21
+		g1 = gauss(x, self.line[0]*(1+z), convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z), n1)
+		g2 = gauss(x, self.line[1]*(1+z), convolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
+		return g1+g2
+
 	def gauss_o2_w_cont(self, x, z, sig, n1, n21, a1, b1):
 		n2 = n1*n21
 		mask1 = (x>self.wavemin1) & (x<self.wavemax1)
