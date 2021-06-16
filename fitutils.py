@@ -67,6 +67,12 @@ class FitFunc():
 		g2 = gauss(x, self.line[1]*(1+z), convolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
 		return g1+g2
 
+	def gauss_o2_display(self, x, z, sig, n1, n21):
+		n2 = n1*n21
+		g1 = gauss(x, self.line[0]*(1+z), convolve_lsf(sig, self.lsf[0])/2.998e5*self.line[0]*(1+z), n1)
+		g2 = gauss(x, self.line[1]*(1+z), convolve_lsf(sig, self.lsf[1])/2.998e5*self.line[1]*(1+z), n2)
+		return g1+g2, g1, g2
+
 	def gauss_o2_w_cont(self, x, z, sig, n1, n21, a1, b1):
 		n2 = n1*n21
 		mask1 = (x>self.wavemin1) & (x<self.wavemax1)
@@ -93,6 +99,16 @@ class FitFunc():
 		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
 
 		return g1+g2+g5+g6+cont
+
+	def gauss_o3(self, x, z, sig, n3):
+		n4 = n3*3.
+		g3 = gauss(x, self.line[2]*(1+z), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
+		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
+		return g3+g4
+
+	def gauss_o3_red(self, x, z, sig, n4):
+		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)		
+		return g4
 
 	def gauss_o2_o3_w_cont(self, x, z, sig, n1, n21, n3, a1, b1, a2, b2):
 		n2 = n1*n21
