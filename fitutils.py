@@ -291,8 +291,8 @@ class Fitting():
 											sigma=errfit, p0=self.p0, bounds=self.plim)
 					perr = np.sqrt(np.diag(pcov))
 					# if len(self.p0)>5:
-					popt[4] = popt[0] + popt[4]
-					perr[4] = np.sqrt(perr[0]**2 + perr[4]**2)
+					# popt[4] = popt[0] + popt[4]
+					# perr[4] = np.sqrt(perr[0]**2 + perr[4]**2)
 					# 	print('this happened')
 					self.poptmap[:, y, x] = popt
 					self.perrmap[:, y, x] = perr
