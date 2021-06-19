@@ -215,6 +215,241 @@ class FitFunc():
 
 		return g1+g2+g3+g4+g5+g6+g7+g8
 
+	def gauss_o2_o3_2comp_display(self, x, z1, sig1, n1, n21, n3, z21, sig2, n5, n65, n7):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		z2 = z1+z21
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+
+		return g1+g2+g3+g4+g5+g6+g7+g8, g1, g2, g3+g4, g5, g6, g7+g8
+
+	def gauss_o2_o3_3comp(self, x, z1, sig1, n1, n21, n3, 
+										z21, sig2, n5, n65, n7,
+										z31, sig3, n9, n109, n11):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		n10 = n9*n109
+		n12 = n11*3.
+
+		z2 = z1+z21
+		z3 = z1+z31
+
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+		g9 = gauss(x, self.line[0]*(1+z3), convolve_lsf(sig3, self.lsf[0])/2.998e5*self.line[0]*(1+z3), n9)
+		g10 = gauss(x, self.line[1]*(1+z3), convolve_lsf(sig3, self.lsf[1])/2.998e5*self.line[1]*(1+z3), n10)
+		g11 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n11)
+		g12 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n12)
+
+		return g1+g2+g3+g4+g5+g6+g7+g8+g9+g10+g11+g12
+
+	def gauss_o2_o3_3comp_display(self, x, z1, sig1, n1, n21, n3, 
+										z21, sig2, n5, n65, n7,
+										z31, sig3, n9, n109, n11):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		n10 = n9*n109
+		n12 = n11*3.
+
+		z2 = z1+z21
+		z3 = z1+z31
+
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+		g9 = gauss(x, self.line[0]*(1+z3), convolve_lsf(sig3, self.lsf[0])/2.998e5*self.line[0]*(1+z3), n9)
+		g10 = gauss(x, self.line[1]*(1+z3), convolve_lsf(sig3, self.lsf[1])/2.998e5*self.line[1]*(1+z3), n10)
+		g11 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n11)
+		g12 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n12)
+
+		return g1+g2+g3+g4+g5+g6+g7+g8+g9+g10+g11+g12, g1, g2, g3+g4, g5, g6, g7+g8, g9, g10, g11+g12
+
+	def gauss_o2_o3_4comp(self, x, z1, sig1, n1, n21, n3, 
+										z21, sig2, n5, n65, n7,
+										z31, sig3, n9, n109, n11,
+										z41, sig4, n13, n1413, n15):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		n10 = n9*n109
+		n12 = n11*3.
+		n14 = n13*n1413
+		n16 = n15*3.
+
+		z2 = z1+z21
+		z3 = z1+z31
+		z4 = z1+z41
+
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+		g9 = gauss(x, self.line[0]*(1+z3), convolve_lsf(sig3, self.lsf[0])/2.998e5*self.line[0]*(1+z3), n9)
+		g10 = gauss(x, self.line[1]*(1+z3), convolve_lsf(sig3, self.lsf[1])/2.998e5*self.line[1]*(1+z3), n10)
+		g11 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n11)
+		g12 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n12)
+		g13 = gauss(x, self.line[0]*(1+z4), convolve_lsf(sig4, self.lsf[0])/2.998e5*self.line[0]*(1+z4), n13)
+		g14 = gauss(x, self.line[1]*(1+z4), convolve_lsf(sig4, self.lsf[1])/2.998e5*self.line[1]*(1+z4), n14)
+		g15 = gauss(x, self.line[2]*(1+z4), convolve_lsf(sig4, self.lsf[2])/2.998e5*self.line[2]*(1+z4), n15)
+		g16 = gauss(x, self.line[3]*(1+z4), convolve_lsf(sig4, self.lsf[3])/2.998e5*self.line[3]*(1+z4), n16)
+
+		return g1+g2+g3+g4+g5+g6+g7+g8+g9+g10+g11+g12+g13+g14+g15+g16
+
+	def gauss_o2_o3_4comp_display(self, x, z1, sig1, n1, n21, n3, 
+										z21, sig2, n5, n65, n7,
+										z31, sig3, n9, n109, n11,
+										z41, sig4, n13, n1413, n15):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		n10 = n9*n109
+		n12 = n11*3.
+		n14 = n13*n1413
+		n16 = n15*3.
+
+		z2 = z1+z21
+		z3 = z1+z31
+		z4 = z1+z41
+
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+		g9 = gauss(x, self.line[0]*(1+z3), convolve_lsf(sig3, self.lsf[0])/2.998e5*self.line[0]*(1+z3), n9)
+		g10 = gauss(x, self.line[1]*(1+z3), convolve_lsf(sig3, self.lsf[1])/2.998e5*self.line[1]*(1+z3), n10)
+		g11 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n11)
+		g12 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n12)
+		g13 = gauss(x, self.line[0]*(1+z4), convolve_lsf(sig4, self.lsf[0])/2.998e5*self.line[0]*(1+z4), n13)
+		g14 = gauss(x, self.line[1]*(1+z4), convolve_lsf(sig4, self.lsf[1])/2.998e5*self.line[1]*(1+z4), n14)
+		g15 = gauss(x, self.line[2]*(1+z4), convolve_lsf(sig4, self.lsf[2])/2.998e5*self.line[2]*(1+z4), n15)
+		g16 = gauss(x, self.line[3]*(1+z4), convolve_lsf(sig4, self.lsf[3])/2.998e5*self.line[3]*(1+z4), n16)
+
+		return (g1+g2+g3+g4+g5+g6+g7+g8+g9+g10+g11+g12+g13+g14+g15+g16, 
+			g1, g2, g3+g4, g5, g6, g7+g8, g9, g10, g11+g12, g13, g14, g15+g16)
+
+	def gauss_o2_o3_5comp(self, x, z1, sig1, n1, n21, n3, 
+										z21, sig2, n5, n65, n7,
+										z31, sig3, n9, n109, n11,
+										z41, sig4, n13, n1413, n15,
+										z51, sig5, n17, n1817, n19):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		n10 = n9*n109
+		n12 = n11*3.
+		n14 = n13*n1413
+		n16 = n15*3.
+		n18 = n17*n1817
+		n20 = n19*3.
+
+		z2 = z1+z21
+		z3 = z1+z31
+		z4 = z1+z41
+		z5 = z1+z51
+
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+		g9 = gauss(x, self.line[0]*(1+z3), convolve_lsf(sig3, self.lsf[0])/2.998e5*self.line[0]*(1+z3), n9)
+		g10 = gauss(x, self.line[1]*(1+z3), convolve_lsf(sig3, self.lsf[1])/2.998e5*self.line[1]*(1+z3), n10)
+		g11 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n11)
+		g12 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n12)
+		g13 = gauss(x, self.line[0]*(1+z4), convolve_lsf(sig4, self.lsf[0])/2.998e5*self.line[0]*(1+z4), n13)
+		g14 = gauss(x, self.line[1]*(1+z4), convolve_lsf(sig4, self.lsf[1])/2.998e5*self.line[1]*(1+z4), n14)
+		g15 = gauss(x, self.line[2]*(1+z4), convolve_lsf(sig4, self.lsf[2])/2.998e5*self.line[2]*(1+z4), n15)
+		g16 = gauss(x, self.line[3]*(1+z4), convolve_lsf(sig4, self.lsf[3])/2.998e5*self.line[3]*(1+z4), n16)
+		g17 = gauss(x, self.line[0]*(1+z5), convolve_lsf(sig5, self.lsf[0])/2.998e5*self.line[0]*(1+z5), n17)
+		g18 = gauss(x, self.line[1]*(1+z5), convolve_lsf(sig5, self.lsf[1])/2.998e5*self.line[1]*(1+z5), n18)
+		g19 = gauss(x, self.line[2]*(1+z5), convolve_lsf(sig5, self.lsf[2])/2.998e5*self.line[2]*(1+z5), n19)
+		g20 = gauss(x, self.line[3]*(1+z5), convolve_lsf(sig5, self.lsf[3])/2.998e5*self.line[3]*(1+z5), n20)
+
+		return g1+g2+g3+g4+g5+g6+g7+g8+g9+g10+g11+g12+g13+g14+g15+g16+g17+g18+g19+g20
+
+	def gauss_o2_o3_5comp_display(self, x, z1, sig1, n1, n21, n3, 
+										z21, sig2, n5, n65, n7,
+										z31, sig3, n9, n109, n11,
+										z41, sig4, n13, n1413, n15,
+										z51, sig5, n17, n1817, n19):
+		n2 = n1*n21
+		n4 = n3*3.
+		n6 = n5*n65
+		n8 = n7*3.
+		n10 = n9*n109
+		n12 = n11*3.
+		n14 = n13*n1413
+		n16 = n15*3.
+		n18 = n17*n1817
+		n20 = n19*3.
+
+		z2 = z1+z21
+		z3 = z1+z31
+		z4 = z1+z41
+		z5 = z1+z51
+
+		g1 = gauss(x, self.line[0]*(1+z1), convolve_lsf(sig1, self.lsf[0])/2.998e5*self.line[0]*(1+z1), n1)
+		g2 = gauss(x, self.line[1]*(1+z1), convolve_lsf(sig1, self.lsf[1])/2.998e5*self.line[1]*(1+z1), n2)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3)
+		g4 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4)
+		g5 = gauss(x, self.line[0]*(1+z2), convolve_lsf(sig2, self.lsf[0])/2.998e5*self.line[0]*(1+z2), n5)
+		g6 = gauss(x, self.line[1]*(1+z2), convolve_lsf(sig2, self.lsf[1])/2.998e5*self.line[1]*(1+z2), n6)
+		g7 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n7)
+		g8 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n8)
+		g9 = gauss(x, self.line[0]*(1+z3), convolve_lsf(sig3, self.lsf[0])/2.998e5*self.line[0]*(1+z3), n9)
+		g10 = gauss(x, self.line[1]*(1+z3), convolve_lsf(sig3, self.lsf[1])/2.998e5*self.line[1]*(1+z3), n10)
+		g11 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n11)
+		g12 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n12)
+		g13 = gauss(x, self.line[0]*(1+z4), convolve_lsf(sig4, self.lsf[0])/2.998e5*self.line[0]*(1+z4), n13)
+		g14 = gauss(x, self.line[1]*(1+z4), convolve_lsf(sig4, self.lsf[1])/2.998e5*self.line[1]*(1+z4), n14)
+		g15 = gauss(x, self.line[2]*(1+z4), convolve_lsf(sig4, self.lsf[2])/2.998e5*self.line[2]*(1+z4), n15)
+		g16 = gauss(x, self.line[3]*(1+z4), convolve_lsf(sig4, self.lsf[3])/2.998e5*self.line[3]*(1+z4), n16)
+		g17 = gauss(x, self.line[0]*(1+z5), convolve_lsf(sig5, self.lsf[0])/2.998e5*self.line[0]*(1+z5), n17)
+		g18 = gauss(x, self.line[1]*(1+z5), convolve_lsf(sig5, self.lsf[1])/2.998e5*self.line[1]*(1+z5), n18)
+		g19 = gauss(x, self.line[2]*(1+z5), convolve_lsf(sig5, self.lsf[2])/2.998e5*self.line[2]*(1+z5), n19)
+		g20 = gauss(x, self.line[3]*(1+z5), convolve_lsf(sig5, self.lsf[3])/2.998e5*self.line[3]*(1+z5), n20)
+
+		return (g1+g2+g3+g4+g5+g6+g7+g8+g9+g10+g11+g12+g13+g14+g15+g16+g17+g18+g19+g20,
+			g1, g2, g3+g4, g5, g6, g7+g8, g9, g10, g11+g12, g13, g14, g15+g16, g17, g18, g19+g20)
+
 class Fitting():
 	def __init__(self, cube, wavebounds, func, p0, plim, xlim, ylim, prev_p0 = None):
 		self.wv = cube.wave
@@ -291,8 +526,8 @@ class Fitting():
 											sigma=errfit, p0=self.p0, bounds=self.plim)
 					perr = np.sqrt(np.diag(pcov))
 					# if len(self.p0)>5:
-					# popt[4] = popt[0] + popt[4]
-					# perr[4] = np.sqrt(perr[0]**2 + perr[4]**2)
+					# popt[5] = popt[0] + popt[4]
+					# perr[5] = np.sqrt(perr[0]**2 + perr[4]**2)
 					# 	print('this happened')
 					self.poptmap[:, y, x] = popt
 					self.perrmap[:, y, x] = perr
