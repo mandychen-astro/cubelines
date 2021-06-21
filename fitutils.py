@@ -102,25 +102,25 @@ class FitFunc():
 
 	def gauss_o3(self, x, z, sig, n3):
 		n4 = n3*3.
-		g3 = gauss(x, self.line[2]*(1+z), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
+		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
 		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
 		return g3+g4
 
-	def gauss_o3_2comp(self, x, z, sig, n3, z21, sig2, n3_2):
-		n4 = n3*3.
-		g3 = gauss(x, self.line[2]*(1+z), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
-		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
+	def gauss_o3_2comp(self, x, z1, sig1, n3_1, z21, sig2, n3_2):
+		n4_1 = n3_1*3.
+		g3_1 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3_1)
+		g4_1 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4_1)
 
 		z2 = z1+z21
 		n4_2 = n3_2*3.
 		g3_2 = gauss(x, self.line[2]*(1+z2), convolve_lsf(sig2, self.lsf[2])/2.998e5*self.line[2]*(1+z2), n3_2)
 		g4_2 = gauss(x, self.line[3]*(1+z2), convolve_lsf(sig2, self.lsf[3])/2.998e5*self.line[3]*(1+z2), n4_2)
-		return g3+g4+g3_2+g4_2
+		return g3_1+g4_1+g3_2+g4_2
 
-	def gauss_o3_3comp(self, x, z, sig, n3, z21, sig2, n3_2, z31, sig3, n3_3):
-		n4 = n3*3.
-		g3 = gauss(x, self.line[2]*(1+z), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
-		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
+	def gauss_o3_3comp(self, x, z1, sig1, n3_1, z21, sig2, n3_2, z31, sig3, n3_3):
+		n4_1 = n3_1*3.
+		g3_1 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig1, self.lsf[2])/2.998e5*self.line[2]*(1+z1), n3_1)
+		g4_1 = gauss(x, self.line[3]*(1+z1), convolve_lsf(sig1, self.lsf[3])/2.998e5*self.line[3]*(1+z1), n4_1)
 
 		z2 = z1+z21
 		n4_2 = n3_2*3.
@@ -131,7 +131,7 @@ class FitFunc():
 		n4_3 = n3_3*3.
 		g3_3 = gauss(x, self.line[2]*(1+z3), convolve_lsf(sig3, self.lsf[2])/2.998e5*self.line[2]*(1+z3), n3_3)
 		g4_3 = gauss(x, self.line[3]*(1+z3), convolve_lsf(sig3, self.lsf[3])/2.998e5*self.line[3]*(1+z3), n4_3)
-		return g3+g4+g3_2+g4_2+g3_3+g4_3
+		return g3_1+g4_1+g3_2+g4_2+g3_3+g4_3
 
 	# def gauss_o3_4comp(self, x, z, sig, n3, z2, sig2, n3_2, z3, sig3, n3_3, z4, sig4, n3_4):
 	# 	n4 = n3*3.
