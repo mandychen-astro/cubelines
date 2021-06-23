@@ -102,7 +102,7 @@ class FitFunc():
 
 	def gauss_o3(self, x, z, sig, n3):
 		n4 = n3*3.
-		g3 = gauss(x, self.line[2]*(1+z1), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
+		g3 = gauss(x, self.line[2]*(1+z), convolve_lsf(sig, self.lsf[2])/2.998e5*self.line[2]*(1+z), n3)
 		g4 = gauss(x, self.line[3]*(1+z), convolve_lsf(sig, self.lsf[3])/2.998e5*self.line[3]*(1+z), n4)
 		return g3+g4
 
