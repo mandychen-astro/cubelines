@@ -28,7 +28,8 @@ class O3_1comp():
         self.lsf = lsf
 
     def model(self, x, z1, sig1, n1):
-        n1_blue = n1/3.
+        n1_blue = n1
+        n1 = n1_blue*3.
         g1_blue = gauss(x, self.lam0[0]*(1. + z1), 
             convolve_lsf(sig1, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z1),
             n1_blue)
