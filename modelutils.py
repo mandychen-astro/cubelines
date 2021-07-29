@@ -80,3 +80,57 @@ class O3_2comp():
             n2)
         return (g1_blue + g1_red + g2_blue + g2_red, 
                 g1_blue + g1_red, g2_blue + g2_red) 
+
+class O3_3comp():
+    def __init__(self, lam0, lsf):
+        self.lam0 = lam0
+        self.lsf = lsf
+
+    def model(self, x, z1, sig1, n1, z2, sig2, n2, z3, sig3, n3):
+        n1_blue = n1/3.
+        g1_blue = gauss(x, self.lam0[0]*(1. + z1), 
+            convolve_lsf(sig1, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z1),
+            n1_blue)
+        g1_red = gauss(x, self.lam0[1]*(1. + z1), 
+            convolve_lsf(sig1, self.lsf[1])/2.998e5*self.lam0[1]*(1. + z1), 
+            n1)
+        n2_blue = n2/3.
+        g2_blue = gauss(x, self.lam0[0]*(1. + z2), 
+            convolve_lsf(sig2, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z2),
+            n2_blue)
+        g2_red = gauss(x, self.lam0[1]*(1. + z2), 
+            convolve_lsf(sig2, self.lsf[1])/2.998e5*self.lam0[1]*(1. + z2), 
+            n2)
+        n3_blue = n3/3.
+        g3_blue = gauss(x, self.lam0[0]*(1. + z3), 
+            convolve_lsf(sig3, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z3),
+            n3_blue)
+        g3_red = gauss(x, self.lam0[1]*(1. + z3), 
+            convolve_lsf(sig3, self.lsf[1])/2.998e5*self.lam0[1]*(1. + z3), 
+            n3)
+        return g1_blue + g1_red + g2_blue + g2_red + g3_blue + g3_red
+
+    def model_display(self, x, z1, sig1, n1, z2, sig2, n2, z3, sig3, n3):
+        n1_blue = n1/3.
+        g1_blue = gauss(x, self.lam0[0]*(1. + z1), 
+            convolve_lsf(sig1, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z1),
+            n1_blue)
+        g1_red = gauss(x, self.lam0[1]*(1. + z1), 
+            convolve_lsf(sig1, self.lsf[1])/2.998e5*self.lam0[1]*(1. + z1), 
+            n1)
+        n2_blue = n2/3.
+        g2_blue = gauss(x, self.lam0[0]*(1. + z2), 
+            convolve_lsf(sig2, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z2),
+            n2_blue)
+        g2_red = gauss(x, self.lam0[1]*(1. + z2), 
+            convolve_lsf(sig2, self.lsf[1])/2.998e5*self.lam0[1]*(1. + z2), 
+            n2)
+        n3_blue = n3/3.
+        g3_blue = gauss(x, self.lam0[0]*(1. + z3), 
+            convolve_lsf(sig3, self.lsf[0])/2.998e5*self.lam0[0]*(1. + z3),
+            n3_blue)
+        g3_red = gauss(x, self.lam0[1]*(1. + z3), 
+            convolve_lsf(sig3, self.lsf[1])/2.998e5*self.lam0[1]*(1. + z3), 
+            n3)
+        return (g1_blue + g1_red + g2_blue + g2_red + g3_blue + g3_red,
+                g1_blue + g1_red, g2_blue + g2_red, g3_blue + g3_red)
